@@ -1,0 +1,1316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GridOra - Simulation Results</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: {
+                800: "#131e3a",
+                900: "#0b132b",
+                950: "#080d1e",
+              },
+              teal: {
+                600: "#0d7a5f",
+                700: "#0b5e4a",
+                800: "#084838",
+                900: "#053328",
+              },
+              gridbg: "#f4f6f8",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f4f6f8;
+        color: #1e293b;
+      }
+
+      /* Custom Scrollbars */
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      /* Range Slider Styling */
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type="range"]:focus {
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 6px;
+        cursor: pointer;
+        background: #e2e8f0;
+        border-radius: 3px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background: #0b5e4a;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s ease;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+      }
+
+      /* Custom Input Number Spinners Hidden */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+    </style>
+  </head>
+  <body class="flex h-screen overflow-hidden text-slate-800 bg-gridbg">
+    <!-- ================= 1. LEFT NAVIGATION SIDEBAR ================= -->
+    <aside
+      class="w-64 bg-navy-900 text-slate-300 flex flex-col flex-shrink-0 z-20 shadow-xl"
+    >
+      <!-- GridOra Logo Section -->
+      <div class="p-6 flex items-center space-x-3">
+        <div class="flex items-center">
+          <img
+            src="assets/logowhite.png"
+            alt="GridOra Logo"
+            class="h-15 object-contain"
+          />
+        </div>
+      </div>
+
+      <!-- Navigation Items -->
+<nav class="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+  <a href="Dashboard.html" data-page="Dashboard.html"
+     class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm">
+    <i class="fa-solid fa-house text-base w-5"></i>
+    <span>Dashboard</span>
+  </a>
+
+  <a href="SimulationResult.html" data-page="SimulationResult.html"
+     class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm">
+    <i class="fa-solid fa-circle-play text-base w-5"></i>
+    <span>Simulation</span>
+  </a>
+
+  <a href="SimulationHistory.html" data-page="SimulationHistory.html"
+     class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm">
+    <i class="fa-solid fa-rotate-left text-base w-5"></i>
+    <span>Simulation History</span>
+  </a>
+
+  <a href="MaintenanceAlerts.html" data-page="MaintenanceAlerts.html"
+     class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm">
+    <i class="fa-solid fa-triangle-exclamation text-base w-5"></i>
+    <span>Maintenance Alerts</span>
+  </a>
+
+  <a href="timePredicter.html" data-page="timePredicter.html"
+     class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm">
+    <i class="fa-solid fa-hourglass-half text-base w-5"></i>
+    <span>Time Predictor</span>
+  </a>
+
+  <a href="Settings.html" data-page="Settings.html"
+     class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm mt-8">
+    <i class="fa-solid fa-gear text-base w-5"></i>
+    <span>Settings</span>
+  </a>
+</nav>
+    </aside>
+    ```
+
+    <!-- ================= MAIN CONTENT WRAPPER ================= -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      <!-- ================= 2. HEADER AREA ================= -->
+      <header
+        class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between flex-shrink-0"
+      >
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
+            Simulation Results
+          </h1>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Configure parameters and check live simulation
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-6">
+          <!-- Date and Time -->
+          <div class="text-xs font-semibold text-slate-600 tracking-wide">
+            17 OCT 2026 &nbsp;|&nbsp; 14:32
+          </div>
+
+          <!-- Notification Bell -->
+          <button
+            class="relative p-2 text-slate-500 hover:text-slate-800 transition"
+          >
+            <i class="fa-regular fa-bell text-lg"></i>
+            <span
+              class="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500 rounded-full"
+            ></span>
+          </button>
+
+          <!-- User Profile Avatar -->
+          <div class="flex items-center space-x-2">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120"
+              alt="User Profile"
+              class="w-9 h-9 rounded-full border-2 border-slate-200 object-cover"
+            />
+          </div>
+        </div>
+      </header>
+
+      <!-- ================= BODY DASHBOARD CONTAINER ================= -->
+      <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+        <!-- ================= 3. TOP 8 METRIC KPI CARDS (4x2 GRID) ================= -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- 1. Peak Generation -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-sun"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Peak Generation</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-peak-gen"
+                >28.4 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 2. Peak Demand -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Peak Demand</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-peak-demand"
+                >32.1 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 3. Battery SoC -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-battery-full"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Battery SoC</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-battery-soc"
+                >100 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 4. Predicted Grid Import -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-tower-cell"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Predicted Grid Import</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-grid-import"
+                >0 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 5. Predicted Grid Export -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-tower-broadcast"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Predicted Grid Export</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-grid-export"
+                >3.2 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 6. Predicted P2P Sharing -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-circle-nodes"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Predicted P2P Sharing</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-p2p-sharing"
+                >280 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 7. Solar Curtailment -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center text-2xl flex-shrink-0"
+            >
+              <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Solar Curtailment</span
+              >
+              <span
+                class="text-xl font-bold text-rose-500 leading-snug"
+                id="kpi-curtailment"
+                >400 kW</span
+              >
+            </div>
+          </div>
+
+          <!-- 8. Live Action - Dynamic -->
+          <div
+            class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-4"
+            id="live-action-card"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-pink-50 text-pink-500 flex items-center justify-center text-2xl flex-shrink-0"
+              id="live-action-icon"
+            >
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <div>
+              <span class="text-xs font-medium text-slate-500 block"
+                >Live Action</span
+              >
+              <span
+                class="text-xl font-bold text-teal-700 leading-snug"
+                id="kpi-live-action"
+                >Curtailment</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TWO-COLUMN MAIN WORKSPACE ================= -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- LEFT WORKSPACE COLUMN (65% / 8 COLS) -->
+          <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+            <!-- 4. 24-HOUR MICROGRID POWER PROFILE CHART CARD -->
+            <div
+              class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4"
+            >
+              <div
+                class="flex items-center justify-between pb-2 border-b border-slate-100"
+              >
+                <div>
+                  <h3 class="text-sm font-bold text-slate-800">
+                    24-Hour Microgrid Power Profile
+                  </h3>
+                  <p class="text-[11px] text-slate-400">
+                    Live hourly generation vs demand, battery state, and grid
+                    exchange
+                  </p>
+                </div>
+                <span
+                  class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-semibold border border-slate-200"
+                >
+                  Hourly Resolution
+                </span>
+              </div>
+
+              <!-- Chart Canvas Container -->
+              <div class="h-64 w-full relative">
+                <canvas id="powerProfileChart"></canvas>
+              </div>
+            </div>
+
+            <!-- 5. SMART OPTIMIZATION TIPS & ACTION BUTTONS (DYNAMIC RECOMMENDATIONS) -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+              <!-- Tips Box (Light green-gray background) -->
+              <div
+                class="md:col-span-7 bg-[#ebf3f0] p-5 rounded-2xl border border-emerald-900/10 space-y-3.5"
+              >
+                <div class="flex items-center space-x-2 text-slate-800">
+                  <i
+                    class="fa-solid fa-wand-magic-sparkles text-emerald-700 text-sm"
+                  ></i>
+                  <h4
+                    class="text-xs font-bold uppercase tracking-wider text-slate-800"
+                  >
+                    Smart Optimization Tips
+                  </h4>
+                </div>
+                <p class="text-[11px] text-slate-500 -mt-2">
+                  Real-time suggestions based on current parameter
+                  configurations:
+                </p>
+
+                <!-- Recommendation 1: Storage vs Solar (Dynamic) -->
+                <div
+                  class="p-3.5 rounded-xl bg-[#f7eedf] border border-amber-200/60 space-y-1"
+                  id="recommendation-storage"
+                >
+                  <h5
+                    class="text-xs font-bold text-amber-900"
+                    id="recommendation-storage-title"
+                  >
+                    Storage Capacity Bottleneck
+                  </h5>
+                  <p
+                    class="text-[11px] text-amber-800/80 leading-relaxed"
+                    id="tip-bottleneck-text"
+                  >
+                    Battery storage (2000 kWh) is undersized for 3650 kW PV.
+                    ~22% surplus midday solar is being curtailed or wasted.
+                  </p>
+                </div>
+
+                <!-- Recommendation 2: P2P / Grid balance (Dynamic) -->
+                <div
+                  class="p-3.5 rounded-xl bg-[#dbece5] border border-emerald-200/60 space-y-1"
+                  id="recommendation-p2p"
+                >
+                  <h5
+                    class="text-xs font-bold text-teal-950"
+                    id="recommendation-p2p-title"
+                  >
+                    High P2P Efficiency
+                  </h5>
+                  <p
+                    class="text-[11px] text-teal-900/80 leading-relaxed"
+                    id="tip-p2p-text"
+                  >
+                    Neighborhood energy sharing is active with 91% peer
+                    transmission efficiency.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Action Buttons Stack -->
+              <div class="md:col-span-5 space-y-3 pt-2 md:pt-6">
+                <button
+                  onclick="handleExportReport()"
+                  class="w-full py-3 px-4 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center space-x-2"
+                >
+                  <i class="fa-solid fa-file-pdf"></i>
+                  <span>Export Report</span>
+                </button>
+
+                <button
+                  onclick="handleResetDefault()"
+                  class="w-full py-3 px-4 bg-white hover:bg-slate-50 border-2 border-teal-700 text-teal-700 font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2 shadow-xs"
+                >
+                  <i class="fa-solid fa-rotate-left"></i>
+                  <span>Reset Default</span>
+                </button>
+
+                <button
+                  onclick="handleSaveScenario()"
+                  class="w-full py-3 px-4 bg-white hover:bg-slate-50 border-2 border-teal-700 text-teal-700 font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2 shadow-xs"
+                >
+                  <i class="fa-regular fa-bookmark"></i>
+                  <span>Save Scenario</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT CONTROL PANEL COLUMN (35% / 4 COLS) -->
+          <div
+            class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-5"
+          >
+            <div>
+              <div class="flex items-center space-x-2 text-slate-800">
+                <i class="fa-solid fa-sliders text-teal-700 text-sm"></i>
+                <h3 class="text-sm font-bold text-slate-800">
+                  Live Edit Parameters
+                </h3>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                Tweak initial inputs to test live outcomes
+              </p>
+            </div>
+
+            <!-- PARAMETERS FORM CONTROLS -->
+            <div class="space-y-4">
+              <!-- 1. Total Solar Capacity (PV) -->
+              <div
+                class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5"
+              >
+                <div class="flex items-center justify-between">
+                  <label
+                    class="text-xs font-bold text-slate-700 flex items-center space-x-1.5"
+                  >
+                    <i
+                      class="fa-solid fa-solar-panel text-teal-600 text-xs"
+                    ></i>
+                    <span>Total Solar Capacity (PV)</span>
+                  </label>
+                  <span
+                    class="text-xs font-bold text-teal-700"
+                    id="val-solar-display"
+                    >700 kWh</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="slider-solar"
+                  min="0"
+                  max="10000"
+                  step="50"
+                  value="700"
+                  oninput="updateLiveSimulation()"
+                />
+                <div class="flex justify-between text-[10px] text-slate-400">
+                  <span>0</span>
+                  <span>10000</span>
+                </div>
+                <p class="text-[10px] text-slate-400">
+                  Includes: 5kW, 10kW, 15kW, 50kW groups
+                </p>
+              </div>
+
+              <!-- 2. Battery Storage Capacity -->
+              <div
+                class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5"
+              >
+                <div class="flex items-center justify-between">
+                  <label
+                    class="text-xs font-bold text-slate-700 flex items-center space-x-1.5"
+                  >
+                    <i
+                      class="fa-solid fa-battery-three-quarters text-emerald-600 text-xs"
+                    ></i>
+                    <span>Battery Storage Capacity</span>
+                  </label>
+                  <span
+                    class="text-xs font-bold text-teal-700"
+                    id="val-battery-display"
+                    >2000 kWh</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="slider-battery"
+                  min="0"
+                  max="10000"
+                  step="100"
+                  value="2000"
+                  oninput="updateLiveSimulation()"
+                />
+                <div class="flex justify-between text-[10px] text-slate-400">
+                  <span>0</span>
+                  <span>10000</span>
+                </div>
+              </div>
+
+              <!-- 3. Number of Households -->
+              <div
+                class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5"
+              >
+                <div class="flex items-center justify-between">
+                  <label
+                    class="text-xs font-bold text-slate-700 flex items-center space-x-1.5"
+                  >
+                    <i class="fa-solid fa-house-user text-blue-500 text-xs"></i>
+                    <span>Number of Households</span>
+                  </label>
+                  <span
+                    class="text-xs font-bold text-teal-700"
+                    id="val-households-display"
+                    >1200</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="slider-households"
+                  min="0"
+                  max="10000"
+                  step="10"
+                  value="1200"
+                  oninput="updateLiveSimulation()"
+                />
+                <div class="flex justify-between text-[10px] text-slate-400">
+                  <span>0</span>
+                  <span>10000</span>
+                </div>
+              </div>
+
+              <!-- 4. Estimated Base Demand -->
+              <div
+                class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5"
+              >
+                <div class="flex items-center justify-between">
+                  <label
+                    class="text-xs font-bold text-slate-700 flex items-center space-x-1.5"
+                  >
+                    <i class="fa-solid fa-bolt text-amber-500 text-xs"></i>
+                    <span>Estimated Base Demand</span>
+                  </label>
+                  <span
+                    class="text-xs font-bold text-teal-700"
+                    id="val-demand-display"
+                    >1000 kW</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="slider-demand"
+                  min="0"
+                  max="10000"
+                  step="10"
+                  value="1000"
+                  oninput="updateLiveSimulation()"
+                />
+                <div class="flex justify-between text-[10px] text-slate-400">
+                  <span>0</span>
+                  <span>10000</span>
+                </div>
+              </div>
+
+              <!-- Grid Connection Settings -->
+              <div
+                class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2.5"
+              >
+                <div class="flex items-center justify-between">
+                  <label
+                    class="text-xs font-bold text-slate-700 flex items-center space-x-1.5"
+                  >
+                    <i
+                      class="fa-solid fa-tower-cell text-slate-600 text-xs"
+                    ></i>
+                    <span>Grid Connection Settings</span>
+                  </label>
+                  <!-- Toggle Switch -->
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-grid"
+                      class="sr-only peer"
+                      checked
+                      onchange="updateLiveSimulation()"
+                    />
+                    <div
+                      class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-teal-700"
+                    ></div>
+                  </label>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5"
+                      >Grid Export Limit</span
+                    >
+                    <div
+                      class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1"
+                    >
+                      <input
+                        type="number"
+                        id="input-grid-export"
+                        value="100"
+                        class="w-full text-xs font-bold text-slate-700 outline-none"
+                        oninput="updateLiveSimulation()"
+                      />
+                      <span class="text-[10px] text-slate-400">kWh</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5"
+                      >Grid Import Limit</span
+                    >
+                    <div
+                      class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1"
+                    >
+                      <input
+                        type="number"
+                        id="input-grid-import"
+                        value="100"
+                        class="w-full text-xs font-bold text-slate-700 outline-none"
+                        oninput="updateLiveSimulation()"
+                      />
+                      <span class="text-[10px] text-slate-400">kWh</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- P2P Sharing Settings -->
+              <div
+                class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2.5"
+              >
+                <div class="flex items-center justify-between">
+                  <label
+                    class="text-xs font-bold text-slate-700 flex items-center space-x-1.5"
+                  >
+                    <i
+                      class="fa-solid fa-circle-nodes text-cyan-600 text-xs"
+                    ></i>
+                    <span>P2P Sharing Settings</span>
+                  </label>
+                  <!-- Toggle Switch -->
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-p2p"
+                      class="sr-only peer"
+                      checked
+                      onchange="updateLiveSimulation()"
+                    />
+                    <div
+                      class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-teal-700"
+                    ></div>
+                  </label>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5"
+                      >P2P Export Limit</span
+                    >
+                    <div
+                      class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1"
+                    >
+                      <input
+                        type="number"
+                        id="input-p2p-export"
+                        value="100"
+                        class="w-full text-xs font-bold text-slate-700 outline-none"
+                        oninput="updateLiveSimulation()"
+                      />
+                      <span class="text-[10px] text-slate-400">kWh</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5"
+                      >P2P Import Limit</span
+                    >
+                    <div
+                      class="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1"
+                    >
+                      <input
+                        type="number"
+                        id="input-p2p-import"
+                        value="100"
+                        class="w-full text-xs font-bold text-slate-700 outline-none"
+                        oninput="updateLiveSimulation()"
+                      />
+                      <span class="text-[10px] text-slate-400">kWh</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel Footer Asset Summary -->
+            <div
+              class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-500"
+            >
+              <span>Total Installed Assets:</span>
+              <span class="text-teal-700 font-bold" id="installed-assets-text"
+                >0.7 kW PV | 2.00 kWh BESS</span
+              >
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast Notification Overlay -->
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-3 transition-all transform translate-y-20 opacity-0 z-50"
+    >
+      <i
+        id="toast-icon"
+        class="fa-solid fa-circle-check text-emerald-400 text-base"
+      ></i>
+      <span id="toast-msg">Notification Message</span>
+    </div>
+
+    <!-- ================= SIMULATION & CHART ENGINE SCRIPT ================= -->
+    <script>
+      let chartInstance = null;
+
+      // Default Initial Values Matching UI Screenshot
+      const defaults = {
+        solar: 700,
+        battery: 2000,
+        households: 1200,
+        demand: 1000,
+        gridConnected: true,
+        gridExport: 100,
+        gridImport: 100,
+        p2pConnected: true,
+        p2pExport: 100,
+        p2pImport: 100,
+      };
+
+      window.addEventListener("DOMContentLoaded", () => {
+        initPowerChart();
+        updateLiveSimulation();
+      });
+
+      // Initialize 24-Hour Profile Chart.js
+      function initPowerChart() {
+        const ctx = document
+          .getElementById("powerProfileChart")
+          .getContext("2d");
+
+        const hours = [
+          "00:00",
+          "01:00",
+          "02:00",
+          "03:00",
+          "04:00",
+          "05:00",
+          "06:00",
+          "07:00",
+          "08:00",
+          "09:00",
+          "10:00",
+          "11:00",
+          "12:00",
+          "13:00",
+          "14:00",
+          "15:00",
+          "16:00",
+          "17:00",
+          "18:00",
+          "19:00",
+          "20:00",
+          "21:00",
+          "22:00",
+          "23:00",
+        ];
+
+        chartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: hours,
+            datasets: [
+              {
+                label: "Solar Output (kW)",
+                data: [],
+                borderColor: "#0b5e4a", // Dark Teal
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+              },
+              {
+                label: "Community Demand (kW)",
+                data: [],
+                borderColor: "#ef4444", // Red dashed line
+                borderWidth: 1.8,
+                borderDash: [4, 4],
+                tension: 0.3,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+              },
+              {
+                label: "Battery SoC (%)",
+                data: [],
+                borderColor: "#f59e0b", // Amber/Yellow
+                borderWidth: 2,
+                tension: 0.2,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+              },
+              {
+                label: "P2P Shared Power (kW)",
+                data: [],
+                borderColor: "#a855f7", // Purple
+                borderWidth: 1.8,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: "index",
+              intersect: false,
+            },
+            plugins: {
+              legend: {
+                position: "top",
+                align: "center",
+                labels: {
+                  boxWidth: 8,
+                  boxHeight: 8,
+                  usePointStyle: true,
+                  pointStyle: "circle",
+                  font: {
+                    size: 10,
+                    family: "Inter",
+                    weight: "500",
+                  },
+                  color: "#475569",
+                },
+              },
+              tooltip: {
+                backgroundColor: "#0f172a",
+                titleFont: { size: 11, weight: "bold", family: "Inter" },
+                bodyFont: { size: 10, family: "Inter" },
+                padding: 10,
+                cornerRadius: 8,
+                displayColors: true,
+                callbacks: {
+                  label: function (context) {
+                    return ` ${context.dataset.label}: ${context.raw.toLocaleString()}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  font: { size: 9, family: "Inter" },
+                  color: "#94a3b8",
+                },
+              },
+              y: {
+                min: 0,
+                max: 3500,
+                grid: { color: "#f1f5f9" },
+                ticks: {
+                  stepSize: 500,
+                  font: { size: 9, family: "Inter" },
+                  color: "#94a3b8",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Mathematical Simulation Calculations
+      function updateLiveSimulation() {
+        // Read UI Parameters
+        const solarVal = parseFloat(
+          document.getElementById("slider-solar").value,
+        );
+        const batteryVal = parseFloat(
+          document.getElementById("slider-battery").value,
+        );
+        const householdsVal = parseFloat(
+          document.getElementById("slider-households").value,
+        );
+        const demandVal = parseFloat(
+          document.getElementById("slider-demand").value,
+        );
+
+        const gridActive = document.getElementById("toggle-grid").checked;
+        const gridExportLimit =
+          parseFloat(document.getElementById("input-grid-export").value) || 0;
+        const gridImportLimit =
+          parseFloat(document.getElementById("input-grid-import").value) || 0;
+
+        const p2pActive = document.getElementById("toggle-p2p").checked;
+        const p2pExportLimit =
+          parseFloat(document.getElementById("input-p2p-export").value) || 0;
+
+        // Update Control Displays
+        document.getElementById("val-solar-display").innerText =
+          `${solarVal.toLocaleString()} kWh`;
+        document.getElementById("val-battery-display").innerText =
+          `${batteryVal.toLocaleString()} kWh`;
+        document.getElementById("val-households-display").innerText =
+          `${householdsVal.toLocaleString()}`;
+        document.getElementById("val-demand-display").innerText =
+          `${demandVal.toLocaleString()} kW`;
+
+        // Asset Summary Footer Line
+        const pvKw = (solarVal / 1000).toFixed(1);
+        const bessKwh = (batteryVal / 1000).toFixed(2);
+        document.getElementById("installed-assets-text").innerText =
+          `${pvKw} kW PV | ${bessKwh} kWh BESS`;
+
+        // Recompute 8 Top KPI Metrics dynamically
+        const peakGen = Math.round(solarVal * 0.0405 * 10) / 10;
+        const peakDemand = Math.round(demandVal * 0.0321 * 10) / 10;
+        const batterySocKw = Math.round(batteryVal * 0.05);
+
+        const gridImportKw = gridActive
+          ? Math.max(0, Math.round(peakDemand - peakGen - batterySocKw * 0.1))
+          : 0;
+        const gridExportKw = gridActive
+          ? Math.min(gridExportLimit, Math.max(0, Math.round(peakGen * 0.11)))
+          : 0;
+        const p2pSharingKw = p2pActive
+          ? Math.min(p2pExportLimit * 2.8, Math.round(solarVal * 0.4))
+          : 0;
+        const curtailmentKw = Math.max(
+          0,
+          Math.round(solarVal * 0.57 - batteryVal * 0.8),
+        );
+
+        // Populate Top Cards
+        document.getElementById("kpi-peak-gen").innerText = `${peakGen} kW`;
+        document.getElementById("kpi-peak-demand").innerText =
+          `${peakDemand} kW`;
+        document.getElementById("kpi-battery-soc").innerText =
+          `${batterySocKw} kW`;
+        document.getElementById("kpi-grid-import").innerText =
+          `${gridImportKw} kW`;
+        document.getElementById("kpi-grid-export").innerText =
+          `${gridExportKw} kW`;
+        document.getElementById("kpi-p2p-sharing").innerText =
+          `${p2pSharingKw} kW`;
+        document.getElementById("kpi-curtailment").innerText =
+          `${curtailmentKw} kW`;
+
+        // --- DYNAMIC LIVE ACTION (based on grid import, curtailment, battery mode) ---
+        const liveActionEl = document.getElementById("kpi-live-action");
+        const liveActionCard = document.getElementById("live-action-card");
+        const liveActionIcon = document.getElementById("live-action-icon");
+
+        let actionText = "";
+        let iconColorClass = "";
+        let iconFaClass = "";
+
+        if (
+          curtailmentKw > 0 &&
+          curtailmentKw >= gridImportKw &&
+          curtailmentKw >= gridExportKw
+        ) {
+          // Curtailment is the dominant active measure
+          actionText = "Curtailment";
+          iconColorClass = "bg-rose-50 text-rose-500";
+          iconFaClass = "fa-solid fa-circle-xmark";
+        } else if (
+          gridImportKw > 0 &&
+          gridImportKw >= gridExportKw &&
+          gridImportKw >= curtailmentKw
+        ) {
+          // Grid import is dominant
+          actionText = "Grid Import";
+          iconColorClass = "bg-blue-50 text-blue-500";
+          iconFaClass = "fa-solid fa-tower-cell";
+        } else if (
+          gridExportKw > 0 &&
+          gridExportKw >= gridImportKw &&
+          gridExportKw >= curtailmentKw
+        ) {
+          // Grid export is dominant
+          actionText = "Grid Export";
+          iconColorClass = "bg-emerald-50 text-emerald-600";
+          iconFaClass = "fa-solid fa-tower-broadcast";
+        } else if (batterySocKw > 0) {
+          // Battery discharge/charge is the main action
+          actionText = "Battery Discharge";
+          iconColorClass = "bg-amber-50 text-amber-600";
+          iconFaClass = "fa-solid fa-battery-three-quarters";
+        } else {
+          actionText = "Idle / Balanced";
+          iconColorClass = "bg-slate-100 text-slate-500";
+          iconFaClass = "fa-solid fa-bullseye";
+        }
+
+        liveActionEl.innerText = actionText;
+        // Update icon container class (preserve size and rounding)
+        liveActionIcon.className = `w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${iconColorClass}`;
+        liveActionIcon.innerHTML = `<i class="${iconFaClass}"></i>`;
+
+        // Dynamic Chart Curves
+        const solarCurve = [];
+        const demandCurve = [];
+        const batterySocCurve = [];
+        const p2pCurve = [];
+
+        const solarScale = solarVal / 700;
+        const demandScale = (demandVal * (householdsVal / 1200)) / 1000;
+
+        // 24 Hour Curve Generation
+        const baseSolarProfile = [
+          0, 0, 0, 0, 0, 0, 150, 600, 1500, 2600, 3140, 3200, 3100, 2700, 1800,
+          800, 200, 0, 0, 0, 0, 0, 0, 0,
+        ];
+        const baseDemandProfile = [
+          500, 420, 380, 360, 400, 520, 750, 950, 1050, 1100, 1120, 1150, 1180,
+          1200, 1150, 1100, 1300, 1800, 2000, 1900, 1500, 1100, 800, 600,
+        ];
+        const baseBatteryProfile = [
+          100, 100, 100, 100, 100, 100, 100, 95, 80, 70, 75, 85, 95, 100, 100,
+          100, 90, 70, 50, 30, 20, 15, 100, 100,
+        ];
+        const baseP2pProfile = [
+          0, 0, 0, 0, 0, 0, 50, 200, 450, 680, 774, 800, 780, 650, 400, 150, 0,
+          0, 0, 0, 0, 0, 0, 0,
+        ];
+
+        for (let i = 0; i < 24; i++) {
+          solarCurve.push(Math.round(baseSolarProfile[i] * solarScale));
+          demandCurve.push(Math.round(baseDemandProfile[i] * demandScale));
+          batterySocCurve.push(
+            Math.round(baseBatteryProfile[i] * (batteryVal / 2000)),
+          );
+          p2pCurve.push(
+            p2pActive
+              ? Math.round(baseP2pProfile[i] * (p2pExportLimit / 100))
+              : 0,
+          );
+        }
+
+        if (chartInstance) {
+          chartInstance.data.datasets[0].data = solarCurve;
+          chartInstance.data.datasets[1].data = demandCurve;
+          chartInstance.data.datasets[2].data = batterySocCurve;
+          chartInstance.data.datasets[3].data = p2pCurve;
+          chartInstance.options.scales.y.max = Math.max(
+            3500,
+            Math.round(solarVal * 4.5),
+          );
+          chartInstance.update("none");
+        }
+
+        // --- DYNAMIC SMART RECOMMENDATIONS (replacing static tips) ---
+        // Recommendation 1: Storage vs Solar / curtailment
+        const storageRecTitle = document.getElementById(
+          "recommendation-storage-title",
+        );
+        const storageRecText = document.getElementById("tip-bottleneck-text");
+        const curtailmentRatio =
+          solarVal > 0 ? (curtailmentKw / solarVal) * 100 : 0;
+
+        if (curtailmentKw > 100 || curtailmentRatio > 15) {
+          storageRecTitle.innerText = "⚠️ Storage Capacity Bottleneck";
+          storageRecText.innerText = `Battery storage (${batteryVal.toLocaleString()} kWh) is undersized for ${solarVal.toLocaleString()} kW PV. ~${curtailmentRatio.toFixed(0)}% surplus midday solar is being curtailed or wasted. Consider increasing storage to reduce curtailment.`;
+        } else if (batteryVal < solarVal * 0.5 && curtailmentKw > 30) {
+          storageRecTitle.innerText = "🔋 Moderate Storage Deficit";
+          storageRecText.innerText = `Battery storage (${batteryVal.toLocaleString()} kWh) could be increased to better absorb the ${solarVal.toLocaleString()} kW PV output. Current curtailment is ${curtailmentKw} kW.`;
+        } else {
+          storageRecTitle.innerText = "✅ Storage Well Balanced";
+          storageRecText.innerText = `Storage capacity (${batteryVal.toLocaleString()} kWh) is well balanced for current ${solarVal.toLocaleString()} kW PV output. Curtailment is minimal.`;
+        }
+
+        // Recommendation 2: P2P / Grid synergy
+        const p2pRecTitle = document.getElementById("recommendation-p2p-title");
+        const p2pRecText = document.getElementById("tip-p2p-text");
+
+        if (p2pActive) {
+          if (p2pSharingKw > 50 && gridExportKw < gridExportLimit * 0.5) {
+            p2pRecTitle.innerText = "🔗 High P2P Efficiency";
+            p2pRecText.innerText = `Neighborhood energy sharing is active with 91% peer transmission efficiency. P2P is reducing grid export by ${p2pSharingKw} kW.`;
+          } else if (p2pSharingKw > 10) {
+            p2pRecTitle.innerText = "🔗 P2P Sharing Active";
+            p2pRecText.innerText = `P2P sharing is contributing ${p2pSharingKw} kW to the local community. Consider increasing export limit to maximize peer utilization.`;
+          } else {
+            p2pRecTitle.innerText = "ℹ️ P2P Idle";
+            p2pRecText.innerText = `P2P sharing is enabled but no excess energy is available at current limits. Adjust PV or demand to activate sharing.`;
+          }
+        } else {
+          p2pRecTitle.innerText = "⚠️ P2P Sharing Disabled";
+          p2pRecText.innerText = `P2P sharing is currently disabled. Enable P2P to optimize local microgrid distribution and reduce grid dependency.`;
+        }
+
+        // Optional additional recommendation if grid import is high
+        if (gridImportKw > 50 && !p2pActive) {
+          // Could append or modify, but we have two boxes only. We'll adjust the p2p text to include grid note.
+          p2pRecTitle.innerText = "⚠️ High Grid Import & P2P Off";
+          p2pRecText.innerText = `Grid import is ${gridImportKw} kW and P2P sharing is disabled. Enabling P2P could reduce grid dependency significantly.`;
+        }
+      }
+
+      // Button Action Handlers
+      function handleExportReport() {
+        showToast(
+          "Generating GridOra Simulation Report PDF...",
+          "fa-file-pdf",
+          "#3b82f6",
+        );
+      }
+
+      function handleResetDefault() {
+        document.getElementById("slider-solar").value = defaults.solar;
+        document.getElementById("slider-battery").value = defaults.battery;
+        document.getElementById("slider-households").value =
+          defaults.households;
+        document.getElementById("slider-demand").value = defaults.demand;
+
+        document.getElementById("toggle-grid").checked = defaults.gridConnected;
+        document.getElementById("input-grid-export").value =
+          defaults.gridExport;
+        document.getElementById("input-grid-import").value =
+          defaults.gridImport;
+
+        document.getElementById("toggle-p2p").checked = defaults.p2pConnected;
+        document.getElementById("input-p2p-export").value = defaults.p2pExport;
+        document.getElementById("input-p2p-import").value = defaults.p2pImport;
+
+        updateLiveSimulation();
+        showToast(
+          "Reset parameters to default configuration.",
+          "fa-rotate-left",
+          "#10b981",
+        );
+      }
+
+      function handleSaveScenario() {
+        showToast(
+          "Scenario saved successfully to Simulation History!",
+          "fa-bookmark",
+          "#8b5cf6",
+        );
+      }
+
+      // Toast Popup Helper
+      function showToast(message, iconClass, iconColor) {
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toast-msg");
+        const toastIcon = document.getElementById("toast-icon");
+
+        toastMsg.innerText = message;
+        toastIcon.className = `fa-solid ${iconClass} text-base`;
+        toastIcon.style.color = iconColor || "#10b981";
+
+        toast.classList.remove("translate-y-20", "opacity-0");
+        toast.classList.add("translate-y-0", "opacity-100");
+
+        setTimeout(() => {
+          toast.classList.remove("translate-y-0", "opacity-100");
+          toast.classList.add("translate-y-20", "opacity-0");
+        }, 3000);
+      }
+
+      // Auto-highlight the active nav link based on current URL
+      (function () {
+        const currentPage =
+          window.location.pathname.split("/").pop() || "index.html";
+
+        document.querySelectorAll("nav a[data-page]").forEach((link) => {
+          const page = link.getAttribute("data-page");
+          const isActive = page === currentPage;
+
+          if (isActive) {
+            link.classList.add(
+              "bg-slate-800/90",
+              "text-white",
+              "border-l-4",
+              "border-emerald-500",
+              "shadow-sm",
+              "font-semibold",
+            );
+            link.classList.remove("text-slate-400", "font-medium");
+
+            const icon = link.querySelector("i");
+            if (icon) icon.classList.add("text-emerald-400");
+          } else {
+            link.classList.remove(
+              "bg-slate-800/90",
+              "text-white",
+              "border-l-4",
+              "border-emerald-500",
+              "shadow-sm",
+              "font-semibold",
+            );
+            link.classList.add("text-slate-400", "font-medium");
+
+            const icon = link.querySelector("i");
+            if (icon) icon.classList.remove("text-emerald-400");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

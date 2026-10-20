@@ -1,0 +1,1473 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grid Outage Survival Time Predictor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: {
+                800: "#1e293b",
+                900: "#0f172a",
+                950: "#101935",
+              },
+              emerald: {
+                600: "#059669",
+                700: "#047857",
+                800: "#055943",
+                900: "#064e3b",
+              },
+              amber: {
+                500: "#f59e0b",
+                600: "#d97706",
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f4f6f8;
+      }
+      /* Custom styled scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      /* Range Slider Styling */
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type="range"]:focus {
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 8px;
+        cursor: pointer;
+        background: #e2e8f0;
+        border-radius: 4px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #047857;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        transition: transform 0.1s ease;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+  <body class="text-slate-800 flex h-screen overflow-hidden">
+    <!-- ================= SIDEBAR (Dark Navy #101935) ================= -->
+    <!-- ================= 1. LEFT NAVIGATION SIDEBAR ================= -->
+    <aside
+      class="w-64 bg-navy-900 text-slate-300 flex flex-col flex-shrink-0 z-20 shadow-xl"
+    >
+      <!-- GridOra Logo Section -->
+      <div class="p-6 flex items-center space-x-3">
+        <div class="flex items-center">
+          <img
+            src="assets/logowhite.png"
+            alt="GridOra Logo"
+            class="h-15 object-contain"
+          />
+        </div>
+      </div>
+
+      <!-- Navigation Items -->
+      <nav class="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+        <a
+          href="Dashboard.html"
+          data-page="Dashboard.html"
+          class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm"
+        >
+          <i class="fa-solid fa-house text-base w-5"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a
+          href="SimulationResult.html"
+          data-page="SimulationResult.html"
+          class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm"
+        >
+          <i class="fa-solid fa-circle-play text-base w-5"></i>
+          <span>Simulation</span>
+        </a>
+
+        <a
+          href="SimulationHistory.html"
+          data-page="SimulationHistory.html"
+          class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm"
+        >
+          <i class="fa-solid fa-rotate-left text-base w-5"></i>
+          <span>Simulation History</span>
+        </a>
+
+        <a
+          href="MaintenanceAlerts.html"
+          data-page="MaintenanceAlerts.html"
+          class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm"
+        >
+          <i class="fa-solid fa-triangle-exclamation text-base w-5"></i>
+          <span>Maintenance Alerts</span>
+        </a>
+
+        <a
+          href="timePredicter.html"
+          data-page="timePredicter.html"
+          class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm"
+        >
+          <i class="fa-solid fa-hourglass-half text-base w-5"></i>
+          <span>Time Predictor</span>
+        </a>
+
+        <a
+          href="Settings.html"
+          data-page="Settings.html"
+          class="flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all text-sm mt-8"
+        >
+          <i class="fa-solid fa-gear text-base w-5"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </aside>
+    ```
+
+    <!-- ================= MAIN CONTENT AREA ================= -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      <!-- TOP HEADER -->
+      <header
+        class="bg-white border-b border-slate-200/80 px-8 py-4 flex items-center justify-between flex-shrink-0"
+      >
+        <div class="flex items-center space-x-4">
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
+                Grid Outage Survival Time Predictor
+              </h1>
+              <span
+                class="px-3 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-bold border border-rose-200 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-triangle-exclamation"></i> OUTAGE MODE
+                ACTIVE
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Real-time battery backup runtime estimation and intelligent
+              load-shedding control
+            </p>
+          </div>
+        </div>
+
+        <!-- Header Info & Controls -->
+        <div class="flex items-center space-x-5">
+          <div
+            class="text-right text-xs text-slate-500 border-r border-slate-200 pr-5 hidden sm:block"
+          >
+            <span
+              class="font-semibold text-slate-700 block text-sm"
+              id="current-date"
+              >17 OCT 2026 | 14:45</span
+            >
+            <span>Microgrid Emergency Mode</span>
+          </div>
+
+          <button
+            class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"
+          >
+            <i class="fa-regular fa-bell text-xl"></i>
+            <span
+              class="absolute top-1 right-1 h-2.5 w-2.5 bg-rose-500 rounded-full"
+            ></span>
+          </button>
+
+          <div class="flex items-center space-x-3">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120"
+              alt="User Profile"
+              class="w-10 h-10 rounded-full border-2 border-emerald-600 object-cover"
+            />
+          </div>
+        </div>
+      </header>
+
+      <!-- DASHBOARD CONTAINER -->
+      <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+        <!-- TOP ROW: KEY OUTAGE METRICS CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- CARD 1: REMAINING BATTERY ENERGY -->
+          <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition"
+          >
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider"
+                >Remaining Battery</span
+              >
+              <div
+                class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg"
+              >
+                <i class="fa-solid fa-battery-three-quarters"></i>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span
+                  class="text-2xl font-bold text-slate-900"
+                  id="kpi-battery-kwh"
+                  >1,600 kWh</span
+                >
+                <span
+                  class="text-sm font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"
+                  id="kpi-battery-soc"
+                  >80% SOC</span
+                >
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Total Battery Capacity:
+                <span class="font-semibold text-slate-700" id="kpi-total-cap"
+                  >2,000 kWh</span
+                >
+              </p>
+            </div>
+          </div>
+
+          <!-- CARD 2: ESTIMATED SURVIVAL TIME (BIG METRIC) -->
+          <div
+            class="bg-gradient-to-br from-emerald-900 to-emerald-800 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between relative overflow-hidden"
+          >
+            <div
+              class="absolute -right-4 -bottom-4 opacity-10 text-8xl text-white pointer-events-none"
+            >
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div
+              class="flex items-center justify-between text-emerald-100 mb-2 z-10"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-emerald-200"
+                >Current Survival Time</span
+              >
+              <span
+                class="px-2 py-0.5 rounded bg-emerald-700/80 text-emerald-100 text-[10px] font-bold border border-emerald-500/30"
+                >DYNAMIC</span
+              >
+            </div>
+            <div class="z-10">
+              <div
+                class="text-3xl font-extrabold tracking-tight text-white"
+                id="kpi-survival-time"
+              >
+                14h 32m
+              </div>
+              <p class="text-xs text-emerald-200 mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-shield-halved text-emerald-300"></i>
+                Backup power duration active
+              </p>
+            </div>
+          </div>
+
+          <!-- CARD 3: TOTAL MICROGRID LOAD -->
+          <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition"
+          >
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider"
+                >Active Microgrid Load</span
+              >
+              <div
+                class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"
+              >
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+            </div>
+            <div>
+              <div
+                class="text-2xl font-bold text-slate-900"
+                id="kpi-total-load"
+              >
+                110.2 kW
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Avg
+                <span
+                  class="font-semibold text-slate-700"
+                  id="kpi-per-home-load"
+                  >1.10 kW</span
+                >
+                / home (<span id="kpi-active-homes">100</span> households)
+              </p>
+            </div>
+          </div>
+
+          <!-- CARD 4: POTENTIAL EXTENDED RUNTIME -->
+          <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition"
+          >
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider"
+                >Potential Gain</span
+              >
+              <div
+                class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg"
+              >
+                <i class="fa-solid fa-hourglass-start"></i>
+              </div>
+            </div>
+            <div>
+              <div
+                class="text-2xl font-bold text-emerald-700"
+                id="kpi-potential-gain"
+              >
+                +8h 15m
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                If recommended load shedding applied
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN SECTION: DISCHARGE CHART & APPLIANCE CONTROL PANEL -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- LEFT COLUMN (60% / 7 COLS): CHARTS & RECOMMENDATIONS -->
+          <div class="lg:col-span-7 xl:col-span-7 space-y-6">
+            <!-- BATTERY DISCHARGE PROFILE CHART -->
+            <div
+              class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm"
+            >
+              <div
+                class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-slate-100 gap-2"
+              >
+                <div>
+                  <h3
+                    class="text-base font-bold text-slate-900 flex items-center gap-2"
+                  >
+                    <i class="fa-solid fa-chart-line text-emerald-700"></i>
+                    Battery Depletion Trajectory (48 Hours)
+                  </h3>
+                  <p class="text-xs text-slate-500">
+                    Baseline discharge slope vs optimized load-shedding scenario
+                  </p>
+                </div>
+                <div class="flex items-center space-x-3 text-xs">
+                  <span
+                    class="flex items-center gap-1.5 font-medium text-rose-600"
+                  >
+                    <span class="w-3 h-0.5 bg-rose-500 inline-block"></span>
+                    Baseline
+                  </span>
+                  <span
+                    class="flex items-center gap-1.5 font-medium text-emerald-700"
+                  >
+                    <span class="w-3 h-0.5 bg-emerald-600 inline-block"></span>
+                    Optimized
+                  </span>
+                </div>
+              </div>
+
+              <div class="h-72 w-full relative">
+                <canvas id="dischargeChart"></canvas>
+              </div>
+            </div>
+
+            <!-- ENERGY-SAVING RECOMMENDATIONS & QUICK-SHED ACTION TIPS -->
+            <div
+              class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4"
+            >
+              <div
+                class="flex items-center justify-between pb-3 border-b border-slate-100"
+              >
+                <div>
+                  <h3
+                    class="text-base font-bold text-slate-900 flex items-center gap-2"
+                  >
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                    Recommended Load-Shedding Actions
+                  </h3>
+                  <p class="text-xs text-slate-500">
+                    Click action buttons to dynamically shed loads and extend
+                    battery life
+                  </p>
+                </div>
+                <span
+                  class="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-bold border border-amber-200"
+                >
+                  <i class="fa-solid fa-bolt"></i> Emergency Savings
+                </span>
+              </div>
+
+              <div class="space-y-3" id="recommendations-list">
+                <!-- Tip 1: Heavy ACs -->
+                <div
+                  class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-100/80 transition"
+                >
+                  <div class="flex items-start space-x-3">
+                    <div
+                      class="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0 mt-0.5"
+                    >
+                      <i class="fa-solid fa-snowflake"></i>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h4 class="text-xs font-bold text-slate-800">
+                          Shed High-Power HVAC / Air Conditioning
+                        </h4>
+                        <span
+                          class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full"
+                          id="tip-ac-gain"
+                          >+4h 10m Gain</span
+                        >
+                      </div>
+                      <p class="text-xs text-slate-600 mt-0.5">
+                        Turning off 1 AC per home reduces microgrid load by
+                        <span
+                          class="font-bold text-slate-700"
+                          id="tip-ac-savings"
+                          >30.0 kW</span
+                        >.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onclick="quickShedAppliance('ac')"
+                    id="btn-shed-ac"
+                    class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs shadow-sm transition whitespace-nowrap flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-power-off"></i>
+                    <span>Turn Off All ACs</span>
+                  </button>
+                </div>
+
+                <!-- Tip 2: Water Heaters -->
+                <div
+                  class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-100/80 transition"
+                >
+                  <div class="flex items-start space-x-3">
+                    <div
+                      class="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0 mt-0.5"
+                    >
+                      <i class="fa-solid fa-temperature-arrow-up"></i>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h4 class="text-xs font-bold text-slate-800">
+                          Shed Water Heaters & Heavy Resistive Loads
+                        </h4>
+                        <span
+                          class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full"
+                          id="tip-water-gain"
+                          >+3h 45m Gain</span
+                        >
+                      </div>
+                      <p class="text-xs text-slate-600 mt-0.5">
+                        Shedding water heaters cuts consumption by
+                        <span
+                          class="font-bold text-slate-700"
+                          id="tip-water-savings"
+                          >40.0 kW</span
+                        >.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onclick="quickShedAppliance('waterHeater')"
+                    id="btn-shed-water"
+                    class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs shadow-sm transition whitespace-nowrap flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-power-off"></i>
+                    <span>Turn Off Water Heaters</span>
+                  </button>
+                </div>
+
+                <!-- Tip 3: Non-Essential Lighting & TV -->
+                <div
+                  class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-100/80 transition"
+                >
+                  <div class="flex items-start space-x-3">
+                    <div
+                      class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5"
+                    >
+                      <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h4 class="text-xs font-bold text-slate-800">
+                          Shed TVs & Entertainment Systems
+                        </h4>
+                        <span
+                          class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full"
+                          id="tip-tv-gain"
+                          >+1h 15m Gain</span
+                        >
+                      </div>
+                      <p class="text-xs text-slate-600 mt-0.5">
+                        Switch off non-essential TVs to save
+                        <span
+                          class="font-bold text-slate-700"
+                          id="tip-tv-savings"
+                          >12.0 kW</span
+                        >
+                        load.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onclick="quickShedAppliance('tv')"
+                    id="btn-shed-tv"
+                    class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs shadow-sm transition whitespace-nowrap flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-power-off"></i>
+                    <span>Turn Off TVs</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- EMERGENCY ACTION FOOTER BUTTONS -->
+              <div class="pt-2 flex flex-wrap gap-3">
+                <button
+                  onclick="applyMaxEmergencyShed()"
+                  class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs shadow-md transition flex items-center justify-center gap-2"
+                >
+                  <i class="fa-solid fa-shield-cat"></i> Apply Maximum Emergency
+                  Load Shedding
+                </button>
+                <button
+                  onclick="restoreAllLoads()"
+                  class="py-2.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition shadow-sm flex items-center justify-center gap-2"
+                >
+                  <i class="fa-solid fa-rotate-left"></i> Restore Full Power
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN (40% / 5 COLS): APPLIANCE LOAD BREAKDOWN & LIVE CONTROLS -->
+          <div
+            class="lg:col-span-5 xl:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col space-y-6"
+          >
+            <div
+              class="flex items-center justify-between pb-3 border-b border-slate-100"
+            >
+              <div>
+                <h2
+                  class="text-base font-bold text-slate-900 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-sliders text-emerald-700"></i> Appliance
+                  Load Manager
+                </h2>
+                <p class="text-xs text-slate-500">
+                  Live household appliance controls & wattage math
+                </p>
+              </div>
+              <span
+                class="text-xs px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold rounded-lg border border-emerald-200"
+                >Interactive</span
+              >
+            </div>
+
+            <!-- GLOBAL MICROGRID SCALERS -->
+            <div
+              class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200/80"
+            >
+              <!-- Households Scaler -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label
+                    class="text-xs font-bold text-slate-800 flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-house-chimney text-blue-600"></i>
+                    Number of Households
+                  </label>
+                  <span
+                    class="text-xs font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200"
+                    id="val-households"
+                    >100 homes</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="input-households"
+                  min="10"
+                  max="500"
+                  step="10"
+                  value="100"
+                  oninput="calculateSurvivalTime()"
+                />
+              </div>
+
+              <!-- Current Available Battery kWh -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label
+                    class="text-xs font-bold text-slate-800 flex items-center gap-1.5"
+                  >
+                    <i
+                      class="fa-solid fa-battery-three-quarters text-emerald-600"
+                    ></i>
+                    Available Battery Energy
+                  </label>
+                  <span
+                    class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"
+                    id="val-battery-input"
+                    >1,600 kWh (80%)</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="input-battery-kwh"
+                  min="100"
+                  max="2000"
+                  step="50"
+                  value="1600"
+                  oninput="calculateSurvivalTime()"
+                />
+              </div>
+            </div>
+
+            <!-- APPLIANCE LIST & INDIVIDUAL CONTROLS -->
+            <div
+              class="space-y-3.5 overflow-y-auto max-h-[480px] pr-1"
+              id="appliance-controls-container"
+            >
+              <!-- APPLIANCE 1: AIR CONDITIONERS -->
+              <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition shadow-xs"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"
+                    >
+                      <i class="fa-solid fa-snowflake"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-800">
+                        Air Conditioner (AC)
+                      </h4>
+                      <span class="text-[10px] text-slate-500"
+                        >1,500W per unit</span
+                      >
+                    </div>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-ac"
+                      class="sr-only peer"
+                      checked
+                      onchange="calculateSurvivalTime()"
+                    />
+                    <div
+                      class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-700"
+                    ></div>
+                  </label>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs pt-2 border-t border-slate-100"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span class="text-slate-500">Qty / home:</span>
+                    <button
+                      onclick="changeQty('ac', -1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <span class="font-bold text-slate-800" id="qty-ac">1</span>
+                    <button
+                      onclick="changeQty('ac', 1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-bold text-slate-900" id="power-ac"
+                      >150.0 kW</span
+                    >
+                    <span
+                      class="text-[10px] text-emerald-700 block font-semibold"
+                      id="impact-ac"
+                      >+4h 10m if off</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- APPLIANCE 2: REFRIGERATOR / FREEZER -->
+              <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition shadow-xs"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-sm"
+                    >
+                      <i class="fa-solid fa-box"></i>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-1.5">
+                        <h4 class="text-xs font-bold text-slate-800">
+                          Refrigerator & Freezer
+                        </h4>
+                        <span
+                          class="text-[9px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold"
+                          >CRITICAL</span
+                        >
+                      </div>
+                      <span class="text-[10px] text-slate-500"
+                        >250W per unit</span
+                      >
+                    </div>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-refrigerator"
+                      class="sr-only peer"
+                      checked
+                      onchange="calculateSurvivalTime()"
+                    />
+                    <div
+                      class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-700"
+                    ></div>
+                  </label>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs pt-2 border-t border-slate-100"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span class="text-slate-500">Qty / home:</span>
+                    <button
+                      onclick="changeQty('refrigerator', -1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <span class="font-bold text-slate-800" id="qty-refrigerator"
+                      >1</span
+                    >
+                    <button
+                      onclick="changeQty('refrigerator', 1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div class="text-right">
+                    <span
+                      class="font-bold text-slate-900"
+                      id="power-refrigerator"
+                      >25.0 kW</span
+                    >
+                    <span
+                      class="text-[10px] text-emerald-700 block font-semibold"
+                      id="impact-refrigerator"
+                      >+1h 05m if off</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- APPLIANCE 3: COMPUTERS & WORKSTATIONS -->
+              <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition shadow-xs"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"
+                    >
+                      <i class="fa-solid fa-laptop"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-800">
+                        Computers & Routers
+                      </h4>
+                      <span class="text-[10px] text-slate-500"
+                        >300W per unit</span
+                      >
+                    </div>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-computers"
+                      class="sr-only peer"
+                      checked
+                      onchange="calculateSurvivalTime()"
+                    />
+                    <div
+                      class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-700"
+                    ></div>
+                  </label>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs pt-2 border-t border-slate-100"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span class="text-slate-500">Qty / home:</span>
+                    <button
+                      onclick="changeQty('computers', -1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <span class="font-bold text-slate-800" id="qty-computers"
+                      >1</span
+                    >
+                    <button
+                      onclick="changeQty('computers', 1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-bold text-slate-900" id="power-computers"
+                      >30.0 kW</span
+                    >
+                    <span
+                      class="text-[10px] text-emerald-700 block font-semibold"
+                      id="impact-computers"
+                      >+1h 20m if off</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- APPLIANCE 4: LED LIGHTS & FANS -->
+              <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition shadow-xs"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm"
+                    >
+                      <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-800">
+                        LED Lighting & Fans
+                      </h4>
+                      <span class="text-[10px] text-slate-500"
+                        >150W total / home</span
+                      >
+                    </div>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-lights"
+                      class="sr-only peer"
+                      checked
+                      onchange="calculateSurvivalTime()"
+                    />
+                    <div
+                      class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-700"
+                    ></div>
+                  </label>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs pt-2 border-t border-slate-100"
+                >
+                  <span class="text-slate-500">Essential Lighting</span>
+                  <div class="text-right">
+                    <span class="font-bold text-slate-900" id="power-lights"
+                      >15.0 kW</span
+                    >
+                    <span
+                      class="text-[10px] text-emerald-700 block font-semibold"
+                      id="impact-lights"
+                      >+0h 40m if off</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- APPLIANCE 5: WATER HEATERS -->
+              <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition shadow-xs"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm"
+                    >
+                      <i class="fa-solid fa-temperature-arrow-up"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-800">
+                        Water Heater / Heavy Loads
+                      </h4>
+                      <span class="text-[10px] text-slate-500"
+                        >2,000W per unit</span
+                      >
+                    </div>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-waterHeater"
+                      class="sr-only peer"
+                      onchange="calculateSurvivalTime()"
+                    />
+                    <div
+                      class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-700"
+                    ></div>
+                  </label>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs pt-2 border-t border-slate-100"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span class="text-slate-500">Qty / home:</span>
+                    <button
+                      onclick="changeQty('waterHeater', -1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <span class="font-bold text-slate-800" id="qty-waterHeater"
+                      >1</span
+                    >
+                    <button
+                      onclick="changeQty('waterHeater', 1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div class="text-right">
+                    <span
+                      class="font-bold text-slate-900"
+                      id="power-waterHeater"
+                      >0.0 kW</span
+                    >
+                    <span
+                      class="text-[10px] text-slate-400 block font-semibold"
+                      id="impact-waterHeater"
+                      >Currently Off</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- APPLIANCE 6: TV & ENTERTAINMENT -->
+              <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition shadow-xs"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm"
+                    >
+                      <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-800">
+                        TV & Entertainment
+                      </h4>
+                      <span class="text-[10px] text-slate-500"
+                        >120W per unit</span
+                      >
+                    </div>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      id="toggle-tv"
+                      class="sr-only peer"
+                      checked
+                      onchange="calculateSurvivalTime()"
+                    />
+                    <div
+                      class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-700"
+                    ></div>
+                  </label>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs pt-2 border-t border-slate-100"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span class="text-slate-500">Qty / home:</span>
+                    <button
+                      onclick="changeQty('tv', -1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <span class="font-bold text-slate-800" id="qty-tv">1</span>
+                    <button
+                      onclick="changeQty('tv', 1)"
+                      class="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700 flex items-center justify-center"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-bold text-slate-900" id="power-tv"
+                      >12.0 kW</span
+                    >
+                    <span
+                      class="text-[10px] text-emerald-700 block font-semibold"
+                      id="impact-tv"
+                      >+0h 30m if off</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- REPORT & SIMULATION ACTION BUTTONS -->
+            <div class="pt-2 space-y-2 border-t border-slate-100">
+              <button
+                onclick="simulateGridRestoration()"
+                class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow transition flex items-center justify-center gap-2"
+              >
+                <i class="fa-solid fa-plug"></i> Add Appliances
+              </button>
+              <button
+                onclick="exportEmergencyPlan()"
+                class="w-full py-2.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition shadow-sm flex items-center justify-center gap-2"
+              >
+                <i class="fa-solid fa-file-arrow-down"></i> Export Emergency
+                Action Plan
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div
+      id="toast-container"
+      class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"
+    ></div>
+
+    <!-- SCRIPT SIMULATION ENGINE -->
+    <script>
+      // Appliance Specifications Database (Watts per unit per household)
+      const APPLIANCES = {
+        ac: { name: "Air Conditioner", watts: 1500, defaultQty: 1, maxQty: 3 },
+        refrigerator: {
+          name: "Refrigerator",
+          watts: 250,
+          defaultQty: 1,
+          maxQty: 2,
+        },
+        computers: { name: "Computers", watts: 300, defaultQty: 1, maxQty: 4 },
+        lights: {
+          name: "LED Lights & Fans",
+          watts: 150,
+          defaultQty: 1,
+          maxQty: 1,
+        },
+        waterHeater: {
+          name: "Water Heater",
+          watts: 2000,
+          defaultQty: 1,
+          maxQty: 2,
+        },
+        tv: {
+          name: "TV & Entertainment",
+          watts: 120,
+          defaultQty: 1,
+          maxQty: 3,
+        },
+      };
+
+      // State Store
+      let state = {
+        households: 100,
+        availableBatteryKwh: 1600,
+        totalBatteryCapacityKwh: 2000,
+        appliances: {
+          ac: { active: true, qty: 1 },
+          refrigerator: { active: true, qty: 1 },
+          computers: { active: true, qty: 1 },
+          lights: { active: true, qty: 1 },
+          waterHeater: { active: false, qty: 1 },
+          tv: { active: true, qty: 1 },
+        },
+      };
+
+      let chartInstance = null;
+
+      // Initialize App
+      window.addEventListener("DOMContentLoaded", () => {
+        initChart();
+        calculateSurvivalTime();
+      });
+
+      // Initialize Chart.js Discharge Slope
+      function initChart() {
+        const ctx = document.getElementById("dischargeChart").getContext("2d");
+        const hoursLabels = Array.from({ length: 49 }, (_, i) => `${i}h`);
+
+        chartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: hoursLabels,
+            datasets: [
+              {
+                label: "Baseline (Current Active Load)",
+                data: [],
+                borderColor: "#ef4444", // Red
+                backgroundColor: "rgba(239, 68, 68, 0.05)",
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2.5,
+                pointRadius: 0,
+              },
+              {
+                label: "Optimized (Load Shedding Applied)",
+                data: [],
+                borderColor: "#047857", // Emerald
+                backgroundColor: "rgba(4, 120, 87, 0.08)",
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2.5,
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (context) =>
+                    `${context.dataset.label}: ${context.raw} kWh`,
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 10 }, maxTicksLimit: 13 },
+              },
+              y: {
+                grid: { color: "#f1f5f9" },
+                ticks: { font: { size: 10 } },
+                min: 0,
+                max: 2000,
+              },
+            },
+          },
+        });
+      }
+
+      // Change Appliance Quantity
+      function changeQty(key, delta) {
+        const current = state.appliances[key].qty;
+        const newQty = Math.max(
+          1,
+          Math.min(APPLIANCES[key].maxQty, current + delta),
+        );
+        state.appliances[key].qty = newQty;
+        document.getElementById(`qty-${key}`).innerText = newQty;
+        calculateSurvivalTime();
+      }
+
+      // Main Dynamic Engine & Recalculation Math
+      function calculateSurvivalTime() {
+        // Read UI Scalers
+        state.households = parseInt(
+          document.getElementById("input-households").value,
+        );
+        state.availableBatteryKwh = parseFloat(
+          document.getElementById("input-battery-kwh").value,
+        );
+
+        // Sync Scaler Displays
+        document.getElementById("val-households").innerText =
+          `${state.households} homes`;
+        const socPercent = Math.round(
+          (state.availableBatteryKwh / state.totalBatteryCapacityKwh) * 100,
+        );
+        document.getElementById("val-battery-input").innerText =
+          `${state.availableBatteryKwh.toLocaleString()} kWh (${socPercent}%)`;
+        document.getElementById("kpi-battery-kwh").innerText =
+          `${state.availableBatteryKwh.toLocaleString()} kWh`;
+        document.getElementById("kpi-battery-soc").innerText =
+          `${socPercent}% SOC`;
+
+        // Read Toggles & Compute Total Active Power (kW)
+        let totalActiveKw = 0;
+        let essentialBaseKw = 0; // Essential base load (Refrigerators + Lights)
+
+        Object.keys(APPLIANCES).forEach((key) => {
+          const toggleEl = document.getElementById(`toggle-${key}`);
+          const isChecked = toggleEl
+            ? toggleEl.checked
+            : state.appliances[key].active;
+          state.appliances[key].active = isChecked;
+
+          const spec = APPLIANCES[key];
+          const qty = state.appliances[key].qty;
+          const kwContribution = isChecked
+            ? (spec.watts * qty * state.households) / 1000
+            : 0;
+
+          totalActiveKw += kwContribution;
+
+          // Track essential baseline
+          if (key === "refrigerator" || key === "lights") {
+            essentialBaseKw += (spec.watts * qty * state.households) / 1000;
+          }
+
+          // Update UI Individual Appliance Card Power text
+          const powerEl = document.getElementById(`power-${key}`);
+          if (powerEl) powerEl.innerText = `${kwContribution.toFixed(1)} kW`;
+        });
+
+        // Prevent division by zero if all off
+        const currentLoadKw = Math.max(0.5, totalActiveKw);
+        const optimizedLoadKw = Math.max(0.5, essentialBaseKw + 5); // Minimum core backup load
+
+        // Survival Time = Battery kWh * DOD Efficiency (0.92) / Active kW
+        const usableKwh = state.availableBatteryKwh * 0.92;
+        const currentHours = usableKwh / currentLoadKw;
+        const optimizedHours = usableKwh / optimizedLoadKw;
+
+        // Format hours into "Xh Ym"
+        const currentFormatted = formatHoursMins(currentHours);
+        const potentialGainHours = Math.max(0, optimizedHours - currentHours);
+        const gainFormatted = formatHoursMins(potentialGainHours);
+
+        // Update KPI DOM Cards
+        document.getElementById("kpi-survival-time").innerText =
+          currentFormatted;
+        document.getElementById("kpi-total-load").innerText =
+          `${currentLoadKw.toFixed(1)} kW`;
+        document.getElementById("kpi-per-home-load").innerText =
+          `${(currentLoadKw / state.households).toFixed(2)} kW`;
+        document.getElementById("kpi-active-homes").innerText =
+          state.households;
+        document.getElementById("kpi-potential-gain").innerText =
+          `+${gainFormatted}`;
+
+        // Update Impact Badges for Each Appliance
+        Object.keys(APPLIANCES).forEach((key) => {
+          const impactEl = document.getElementById(`impact-${key}`);
+          if (!impactEl) return;
+
+          const spec = APPLIANCES[key];
+          const qty = state.appliances[key].qty;
+          const kwThisAppliance = (spec.watts * qty * state.households) / 1000;
+
+          if (state.appliances[key].active) {
+            const newLoadIfOff = Math.max(0.5, currentLoadKw - kwThisAppliance);
+            const newHoursIfOff = usableKwh / newLoadIfOff;
+            const hoursSaved = Math.max(0, newHoursIfOff - currentHours);
+            impactEl.innerText = `+${formatHoursMins(hoursSaved)} if off`;
+            impactEl.className =
+              "text-[10px] text-emerald-700 block font-semibold";
+          } else {
+            impactEl.innerText = "Currently Off";
+            impactEl.className =
+              "text-[10px] text-slate-400 block font-semibold";
+          }
+        });
+
+        // Update Chart Trajectories
+        updateChartTrajectory(currentLoadKw, optimizedLoadKw);
+      }
+
+      // Helper to format float hours to "14h 32m"
+      function formatHoursMins(decimalHours) {
+        if (decimalHours > 120) return "> 120 Hours";
+        const h = Math.floor(decimalHours);
+        const m = Math.round((decimalHours - h) * 60);
+        return `${h}h ${m < 10 ? "0" : ""}${m}m`;
+      }
+
+      // Update Chart Curves
+      function updateChartTrajectory(currentKw, optKw) {
+        if (!chartInstance) return;
+
+        const baselineData = [];
+        const optimizedData = [];
+        const initKwh = state.availableBatteryKwh;
+
+        for (let hour = 0; hour <= 48; hour++) {
+          const remBaseline = Math.max(0, initKwh - currentKw * hour);
+          const remOptimized = Math.max(0, initKwh - optKw * hour);
+
+          baselineData.push(Math.round(remBaseline));
+          optimizedData.push(Math.round(remOptimized));
+        }
+
+        chartInstance.data.datasets[0].data = baselineData;
+        chartInstance.data.datasets[1].data = optimizedData;
+        chartInstance.options.scales.y.max = state.totalBatteryCapacityKwh;
+        chartInstance.update("none");
+      }
+
+      // Quick Shed Single Appliance Action from Recommendation Card
+      function quickShedAppliance(key) {
+        const toggle = document.getElementById(`toggle-${key}`);
+        if (toggle) {
+          toggle.checked = false;
+          calculateSurvivalTime();
+          showToast(
+            `Shedded all ${APPLIANCES[key].name} loads across ${state.households} homes.`,
+          );
+        }
+      }
+
+      // Apply Maximum Emergency Load Shedding
+      function applyMaxEmergencyShed() {
+        Object.keys(APPLIANCES).forEach((key) => {
+          const toggle = document.getElementById(`toggle-${key}`);
+          if (toggle) {
+            // Turn off non-essentials (Keep lights & refrigerator ON)
+            if (key !== "refrigerator" && key !== "lights") {
+              toggle.checked = false;
+            } else {
+              toggle.checked = true;
+            }
+          }
+        });
+        calculateSurvivalTime();
+        showToast("Maximum Emergency Load-Shedding Activated!");
+      }
+
+      // Restore Full Power
+      function restoreAllLoads() {
+        Object.keys(APPLIANCES).forEach((key) => {
+          const toggle = document.getElementById(`toggle-${key}`);
+          if (toggle) toggle.checked = true;
+        });
+        calculateSurvivalTime();
+        showToast("Restored all household appliance loads.");
+      }
+
+      // Simulate Grid Restoration
+      function simulateGridRestoration() {
+        showToast(
+          "Grid connection restored! Battery switched to Charging Mode.",
+        );
+      }
+
+      // Export Emergency Action Plan
+      function exportEmergencyPlan() {
+        showToast("Exporting Emergency Outage Action Plan PDF...");
+      }
+
+      // Toast Feedback Notification
+      function showToast(message) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className =
+          "bg-navy-950 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 border border-emerald-500/40 pointer-events-auto transition-all transform translate-y-2";
+        toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i> <span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 3200);
+      }
+
+      // Auto-highlight the active nav link based on current URL
+      (function () {
+        const currentPage =
+          window.location.pathname.split("/").pop() || "index.html";
+
+        document.querySelectorAll("nav a[data-page]").forEach((link) => {
+          const page = link.getAttribute("data-page");
+          const isActive = page === currentPage;
+
+          if (isActive) {
+            link.classList.add(
+              "bg-slate-800/90",
+              "text-white",
+              "border-l-4",
+              "border-emerald-500",
+              "shadow-sm",
+              "font-semibold",
+            );
+            link.classList.remove("text-slate-400", "font-medium");
+
+            const icon = link.querySelector("i");
+            if (icon) icon.classList.add("text-emerald-400");
+          } else {
+            link.classList.remove(
+              "bg-slate-800/90",
+              "text-white",
+              "border-l-4",
+              "border-emerald-500",
+              "shadow-sm",
+              "font-semibold",
+            );
+            link.classList.add("text-slate-400", "font-medium");
+
+            const icon = link.querySelector("i");
+            if (icon) icon.classList.remove("text-emerald-400");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

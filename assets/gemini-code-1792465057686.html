@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GridOra - Simulation Results</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-main: #F4F6F8;
+      --sidebar-bg: #101935;
+      --sidebar-hover: #1E294B;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --teal-primary: #0B5E4A;
+      --teal-hover: #08493A;
+      --teal-light: #E6F4F0;
+      --border-color: #E2E8F0;
+      --accent-red: #DC2626;
+      --accent-red-bg: #FEF2F2;
+      --accent-amber: #D97706;
+      --accent-green: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden; /* Prevents whole-page scrolling */
+      display: flex;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      background-color: var(--sidebar-bg);
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      height: 100vh;
+    }
+
+    .brand {
+      padding: 0 20px 25px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background-color: #FFFFFF;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sidebar-bg);
+      font-size: 18px;
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94A3B8;
+      display: block;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 12px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      color: #94A3B8;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item a:hover {
+      background-color: var(--sidebar-hover);
+      color: #FFFFFF;
+    }
+
+    .nav-item.active a {
+      background-color: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .nav-item a i {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Container */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .top-header {
+      height: 60px;
+      min-height: 60px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+      background-color: var(--bg-main);
+    }
+
+    .header-title h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .header-title p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .date-time {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .icon-btn {
+      position: relative;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .icon-btn .dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 6px;
+      height: 6px;
+      background-color: #EF4444;
+      border-radius: 50%;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #CBD5E1;
+    }
+
+    /* Content Area - Split View */
+    .content-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      padding: 16px 24px;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Viewport (Fixed Height, No Scroll) */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* KPI Grid - 4x2 */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .kpi-icon-wrapper {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .kpi-content span {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .kpi-content h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0F172A;
+      line-height: 1;
+    }
+
+    /* Specific KPI Icon Colors */
+    .icon-sun { color: #EAB308; background-color: #FEF9C3; }
+    .icon-home { color: #3B82F6; background-color: #EFF6FF; }
+    .icon-battery { color: #10B981; background-color: #ECFDF5; }
+    .icon-import { color: #F59E0B; background-color: #FFFBEB; }
+    .icon-export { color: #059669; background-color: #ECFDF5; }
+    .icon-p2p { color: #0D9488; background-color: #CCFBF1; }
+    .icon-curtail { color: #EF4444; background-color: #FEF2F2; }
+    .icon-action { color: #0284C7; background-color: #E0F2FE; }
+
+    /* Middle Section: Chart & Tips Container */
+    .middle-row {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 12px;
+      min-height: 0; /* Prevents overflow */
+    }
+
+    /* Chart Box */
+    .chart-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .chart-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-title h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .chart-subtitle {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .badge-resolution {
+      background-color: #F1F5F9;
+      color: #64748B;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .chart-body {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      min-height: 0;
+    }
+
+    /* Tips & Action Stack Column */
+    .tips-actions-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+
+    /* Smart Tips Box */
+    .tips-card {
+      background: #EAF3F0;
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #D1E5DF;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+
+    .tips-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--teal-primary);
+    }
+
+    .tips-header h4 {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tips-sub {
+      font-size: 10px;
+      color: #4A7C6D;
+      margin-top: -4px;
+      margin-bottom: 4px;
+    }
+
+    .tip-banner {
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+    }
+
+    .tip-banner.warning {
+      background-color: #F6EBD9;
+      border-left: 3px solid #D97706;
+    }
+
+    .tip-banner.info {
+      background-color: #D3E6E1;
+      border-left: 3px solid #059669;
+    }
+
+    .tip-title {
+      font-weight: 700;
+      color: #1E293B;
+      margin-bottom: 2px;
+      font-size: 11px;
+    }
+
+    .tip-desc {
+      color: #475569;
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    /* Action Buttons Stack */
+    .actions-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--teal-primary);
+      color: #FFFFFF;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--teal-hover);
+    }
+
+    .btn-outline {
+      background-color: #FFFFFF;
+      color: var(--teal-primary);
+      border: 1.5px solid var(--teal-primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--teal-light);
+    }
+
+    /* Right Sidebar - Live Edit Parameters (Scrollable) */
+    .right-panel {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: 100%;
+      overflow-y: auto; /* Internal scrollbar enabled */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    /* Sleek Custom Scrollbar for Right Panel */
+    .right-panel::-webkit-scrollbar {
+      width: 5px;
+    }
+    .right-panel::-webkit-scrollbar-track {
+      background: #F1F5F9;
+      border-radius: 4px;
+    }
+    .right-panel::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+    .right-panel::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    .panel-header h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .param-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .param-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .param-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .param-val {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal-primary);
+    }
+
+    /* Custom Sliders */
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      background: #E2E8F0;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--teal-primary);
+      cursor: pointer;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .slider-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #94A3B8;
+    }
+
+    .param-subtitle {
+      font-size: 9px;
+      color: #94A3B8;
+      margin-top: -2px;
+    }
+
+    /* Section Divider Line */
+    .divider {
+      height: 1px;
+      background-color: #F1F5F9;
+      margin: 2px 0;
+    }
+
+    /* Toggle & Inputs Group */
+    .toggle-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 32px;
+      height: 18px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-toggle {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #CBD5E1;
+      transition: .2s;
+      border-radius: 18px;
+    }
+
+    .slider-toggle:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider-toggle {
+      background-color: var(--teal-primary);
+    }
+
+    input:checked + .slider-toggle:before {
+      transform: translateX(14px);
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .input-box-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .input-box-wrap label {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    .input-with-unit {
+      display: flex;
+      align-items: center;
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 5px;
+      padding: 3px 6px;
+    }
+
+    .input-with-unit input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 10px;
+      font-weight: 600;
+      color: #1E293B;
+      outline: none;
+    }
+
+    .input-with-unit span {
+      font-size: 9px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .asset-summary-footer {
+      font-size: 10px;
+      text-align: center;
+      color: var(--teal-primary);
+      font-weight: 700;
+      background-color: #F0FDF4;
+      padding: 8px;
+      border-radius: 6px;
+      margin-top: auto;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #0F172A;
+      color: #FFFFFF;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+      <div class="brand-text">
+        <h1>GridOra</h1>
+        <span>Smart Microgrid Systems</span>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a href="#"><i class="fa-solid fa-house"></i> Dashboard</a>
+      </li>
+      <li class="nav-item active">
+        <a href="#"><i class="fa-solid fa-circle-play"></i> Simulation</a>
+      </li>
+      <li class="nav-item">
+        <a href="#"><i class="fa-solid fa-rotate-left"></i> Simulation History</a>
+      </li>
+      <li class="nav-item">
+        <a href="#"><i class="fa-solid fa-triangle-exclamation"></i> Maintenance Alerts</a>
+      </li>
+      <li class="nav-item">
+        <a href="#"><i class="fa-solid fa-hourglass-half"></i> Time Predictor</a>
+      </li>
+      <li class="nav-item">
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-wrapper">
+    <!-- Top Header Bar -->
+    <header class="top-header">
+      <div class="header-title">
+        <h2>Simulation Results</h2>
+        <p>Configure parameters and check live simulation</p>
+      </div>
+
+      <div class="header-right">
+        <div class="date-time">17 OCT 2026 &nbsp;|&nbsp; 14:32</div>
+        <button class="icon-btn">
+          <i class="fa-regular fa-bell"></i>
+          <span class="dot"></span>
+        </button>
+        <img src="https://i.pravatar.cc/100?img=33" alt="User Avatar" class="user-avatar">
+      </div>
+    </header>
+
+    <!-- Content Container (Fixed Screen Height) -->
+    <div class="content-container">
+      
+      <!-- Left Screen Viewport (KPIs, Chart, Tips, Action Buttons) -->
+      <div class="left-panel">
+        
+        <!-- 4x2 Metric Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-sun">
+              <i class="fa-solid fa-sun"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Peak Generation</span>
+              <h3 id="val-peak-gen">28.4 kW</h3>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-home">
+              <i class="fa-solid fa-house-user"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Peak Demand</span>
+              <h3 id="val-peak-demand">32.1 kW</h3>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-battery">
+              <i class="fa-solid fa-battery-full"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Battery SoC</span>
+              <h3 id="val-battery-soc">100 kW</h3>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-import">
+              <i class="fa-solid fa-tower-cell"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Predicted Grid Import</span>
+              <h3 id="val-grid-import">0 kW</h3>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-export">
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Predicted Grid Export</span>
+              <h3 id="val-grid-export">3.2 kW</h3>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-p2p">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Predicted P2P Sharing</span>
+              <h3 id="val-p2p-share">280 kW</h3>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-curtail">
+              <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Solar Curtailment</span>
+              <h3 id="val-curtailment">400 kW</h3>
+            </div>
+          </div>
+
+          <!-- Dynamic Live Action KPI Card -->
+          <div class="kpi-card">
+            <div class="kpi-icon-wrapper icon-action" id="action-icon-wrap">
+              <i class="fa-solid fa-bullseye" id="action-icon"></i>
+            </div>
+            <div class="kpi-content">
+              <span>Live Action</span>
+              <h3 id="val-live-action" style="color: #DC2626;">Curtailment</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart + Tips Row -->
+        <div class="middle-row">
+          
+          <!-- 24-Hour Profile Chart Card -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-solid fa-chart-line" style="color: var(--teal-primary); font-size: 13px;"></i>
+                <div>
+                  <h4>24-Hour Microgrid Power Profile</h4>
+                  <div class="chart-subtitle">Live hourly generation vs demand, battery state, and grid exchange</div>
+                </div>
+              </div>
+              <span class="badge-resolution">Hourly Resolution</span>
+            </div>
+
+            <div class="chart-body">
+              <canvas id="microgridChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Smart Tips + Action Column -->
+          <div class="tips-actions-col">
+            <!-- Smart Optimization Tips -->
+            <div class="tips-card">
+              <div class="tips-header">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h4>Smart Optimization Tips</h4>
+              </div>
+              <div class="tips-sub">Real-time suggestions based on current parameter configurations:</div>
+
+              <div class="tip-banner warning">
+                <div class="tip-title" id="tip1-title">Storage Capacity Bottleneck</div>
+                <div class="tip-desc" id="tip1-desc">Battery storage (2000 kWh) is undersized for 3650 kW PV. ~22% surplus midday solar is being curtailed or wasted.</div>
+              </div>
+
+              <div class="tip-banner info">
+                <div class="tip-title" id="tip2-title">High P2P Efficiency</div>
+                <div class="tip-desc" id="tip2-desc">Neighborhood energy sharing is active with 91% peer transmission efficiency.</div>
+              </div>
+            </div>
+
+            <!-- Action Buttons Stack -->
+            <div class="actions-stack">
+              <button class="btn btn-primary" onclick="triggerToast('Exporting simulation analysis report PDF...')">
+                <i class="fa-solid fa-file-pdf"></i> Export Report
+              </button>
+              <button class="btn btn-outline" onclick="resetDefaults()">
+                <i class="fa-solid fa-rotate-left"></i> Reset Default
+              </button>
+              <button class="btn btn-outline" onclick="triggerToast('Simulation scenario saved to history archive!')">
+                <i class="fa-solid fa-bookmark"></i> Save Scenario
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Right Sidebar: Live Edit Parameters (Scrollable) -->
+      <div class="right-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-sliders" style="color: var(--teal-primary);"></i> Live Edit Parameters</h3>
+          <p>Tweak initial inputs to test live outcomes</p>
+        </div>
+
+        <!-- Solar Capacity Slider -->
+        <div class="param-group">
+          <div class="param-label-row">
+            <span class="param-label"><i class="fa-solid fa-solar-panel" style="color: #EAB308;"></i> Total Solar Capacity (PV)</span>
+            <span class="param-val" id="disp-solar">700 kWh</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="input-solar" min="0" max="5000" value="700">
+            <div class="slider-range-labels">
+              <span>0</span>
+              <span>100000</span>
+            </div>
+          </div>
+          <div class="param-subtitle">Includes: 5kW, 10kW, 15kW, 50kW groups</div>
+        </div>
+
+        <!-- Battery Capacity Slider -->
+        <div class="param-group">
+          <div class="param-label-row">
+            <span class="param-label"><i class="fa-solid fa-battery-three-quarters" style="color: #10B981;"></i> Battery Storage Capacity</span>
+            <span class="param-val" id="disp-battery">2000 kWh</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="input-battery" min="0" max="10000" value="2000">
+            <div class="slider-range-labels">
+              <span>0</span>
+              <span>100000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Households Slider -->
+        <div class="param-group">
+          <div class="param-label-row">
+            <span class="param-label"><i class="fa-solid fa-house" style="color: #3B82F6;"></i> Number of Households</span>
+            <span class="param-val" id="disp-households">1200</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="input-households" min="0" max="5000" value="1200">
+            <div class="slider-range-labels">
+              <span>0</span>
+              <span>100000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Base Demand Slider -->
+        <div class="param-group">
+          <div class="param-label-row">
+            <span class="param-label"><i class="fa-solid fa-bolt" style="color: #F59E0B;"></i> Estimated Base Demand</span>
+            <span class="param-val" id="disp-demand">1000 kW</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="input-demand" min="0" max="5000" value="1000">
+            <div class="slider-range-labels">
+              <span>0</span>
+              <span>100000</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Grid Connection Settings -->
+        <div class="param-group">
+          <div class="toggle-section-title">
+            <span><i class="fa-solid fa-tower-cell" style="color: #64748B;"></i> Grid Connection Settings</span>
+            <label class="switch">
+              <input type="checkbox" id="toggle-grid" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+          <div class="inputs-grid">
+            <div class="input-box-wrap">
+              <label>Grid Export Limit</label>
+              <div class="input-with-unit">
+                <input type="number" id="grid-export-limit" value="100">
+                <span>kWh</span>
+              </div>
+            </div>
+            <div class="input-box-wrap">
+              <label>Grid Import Limit</label>
+              <div class="input-with-unit">
+                <input type="number" id="grid-import-limit" value="100">
+                <span>kWh</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P2P Sharing Settings -->
+        <div class="param-group">
+          <div class="toggle-section-title">
+            <span><i class="fa-solid fa-network-wired" style="color: #0D9488;"></i> P2P Sharing Settings</span>
+            <label class="switch">
+              <input type="checkbox" id="toggle-p2p" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+          <div class="inputs-grid">
+            <div class="input-box-wrap">
+              <label>P2P Export Limit</label>
+              <div class="input-with-unit">
+                <input type="number" id="p2p-export-limit" value="100">
+                <span>kWh</span>
+              </div>
+            </div>
+            <div class="input-box-wrap">
+              <label>P2P Import Limit</label>
+              <div class="input-with-unit">
+                <input type="number" id="p2p-import-limit" value="100">
+                <span>kWh</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Asset Footer Summary -->
+        <div class="asset-summary-footer" id="asset-summary-text">
+          Total Installed Assets: 0.7 kW PV | 2.00 kWh BESS
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Element -->
+  <div class="toast" id="toast-msg">Notification Message</div>
+
+  <script>
+    // --- Chart Setup ---
+    const ctx = document.getElementById('microgridChart').getContext('2d');
+
+    const hours = ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+
+    // Base Profile Curves
+    const solarProfile = [0, 0, 0, 0, 0, 0, 50, 300, 1200, 2500, 3100, 3200, 3140, 2800, 2200, 1400, 500, 100, 0, 0, 0, 0, 0, 0];
+    const demandProfile = [400, 380, 350, 340, 360, 420, 500, 520, 540, 550, 560, 550, 560, 570, 580, 600, 700, 900, 1200, 1300, 1250, 1100, 800, 500];
+    const batteryProfile = [40, 35, 30, 25, 20, 15, 12, 20, 45, 75, 95, 100, 100, 100, 95, 80, 65, 50, 30, 15, 10, 10, 20, 30];
+    const p2pProfile = [0, 0, 0, 0, 0, 0, 10, 50, 200, 500, 700, 750, 774, 700, 550, 300, 100, 20, 0, 0, 0, 0, 0, 0];
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: hours,
+        datasets: [
+          {
+            label: 'Solar Output (kW)',
+            data: [...solarProfile],
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 5
+          },
+          {
+            label: 'Community Demand (kW)',
+            data: [...demandProfile],
+            borderColor: '#EF4444',
+            borderWidth: 2,
+            borderDash: [3, 3],
+            tension: 0.4,
+            fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 5
+          },
+          {
+            label: 'Battery SoC (%)',
+            data: [...batteryProfile],
+            borderColor: '#EAB308',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 5
+          },
+          {
+            label: 'P2P Shared Power (kW)',
+            data: [...p2pProfile],
+            borderColor: '#A855F7',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 5
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            align: 'center',
+            labels: {
+              boxWidth: 8,
+              boxHeight: 8,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              font: { size: 10, weight: '500' },
+              color: '#475569'
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0F172A',
+            titleFont: { size: 11, weight: 'bold' },
+            bodyFont: { size: 10 },
+            padding: 8,
+            cornerRadius: 6,
+            displayColors: true,
+            callbacks: {
+              title: (items) => `${items[0].label}`,
+              label: (item) => `${item.dataset.label}: ${Math.round(item.raw).toLocaleString()}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 9 }, color: '#94A3B8' }
+          },
+          y: {
+            grid: { color: '#F1F5F9' },
+            ticks: { font: { size: 9 }, color: '#94A3B8' },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // --- Inputs & Controls References ---
+    const inputSolar = document.getElementById('input-solar');
+    const inputBattery = document.getElementById('input-battery');
+    const inputHouseholds = document.getElementById('input-households');
+    const inputDemand = document.getElementById('input-demand');
+
+    const dispSolar = document.getElementById('disp-solar');
+    const dispBattery = document.getElementById('disp-battery');
+    const dispHouseholds = document.getElementById('disp-households');
+    const dispDemand = document.getElementById('disp-demand');
+
+    const toggleGrid = document.getElementById('toggle-grid');
+    const toggleP2P = document.getElementById('toggle-p2p');
+
+    // --- Recalculation Engine ---
+    function updateSimulation() {
+      const solarVal = parseInt(inputSolar.value);
+      const batteryVal = parseInt(inputBattery.value);
+      const householdVal = parseInt(inputHouseholds.value);
+      const demandVal = parseInt(inputDemand.value);
+
+      const gridActive = toggleGrid.checked;
+      const p2pActive = toggleP2P.checked;
+
+      // Update right panel readout text
+      dispSolar.innerText = `${solarVal} kWh`;
+      dispBattery.innerText = `${batteryVal} kWh`;
+      dispHouseholds.innerText = `${householdVal}`;
+      dispDemand.innerText = `${demandVal} kW`;
+
+      // Asset Footer Text
+      document.getElementById('asset-summary-text').innerText = 
+        `Total Installed Assets: ${(solarVal/1000).toFixed(1)} kW PV | ${(batteryVal/1000).toFixed(2)} kWh BESS`;
+
+      // Multipliers based on input changes
+      const solarMult = solarVal / 700;
+      const demandMult = (demandVal / 1000) * (householdVal / 1200);
+
+      // Recalculate Top KPI Cards
+      const peakGen = Math.round(28.4 * solarMult);
+      const peakDem = Math.round(32.1 * demandMult);
+      const batterySoC = Math.min(100, Math.round(100 * (batteryVal / 2000)));
+
+      let gridExport = gridActive ? Math.max(0, Math.round((peakGen - peakDem) * 0.15)) : 0;
+      let gridImport = gridActive ? Math.max(0, Math.round((peakDem - peakGen) * 0.2)) : 0;
+      let p2pShare = p2pActive ? Math.round(280 * (solarMult + demandMult) / 2) : 0;
+      let curtailment = Math.max(0, Math.round((solarVal * 0.6) - (batteryVal * 0.25)));
+
+      document.getElementById('val-peak-gen').innerText = `${peakGen.toLocaleString()} kW`;
+      document.getElementById('val-peak-demand').innerText = `${peakDem.toLocaleString()} kW`;
+      document.getElementById('val-battery-soc').innerText = `${batterySoC} kW`;
+      document.getElementById('val-grid-import').innerText = `${gridImport.toLocaleString()} kW`;
+      document.getElementById('val-grid-export').innerText = `${gridExport.toLocaleString()} kW`;
+      document.getElementById('val-p2p-share').innerText = `${p2pShare.toLocaleString()} kW`;
+      document.getElementById('val-curtailment').innerText = `${curtailment.toLocaleString()} kW`;
+
+      // --- REQUIREMENT 2: Dynamic Live Action Calculation ---
+      const liveActionVal = document.getElementById('val-live-action');
+      const actionIconWrap = document.getElementById('action-icon-wrap');
+      const actionIcon = document.getElementById('action-icon');
+
+      if (curtailment > 200) {
+        liveActionVal.innerText = "Curtailment";
+        liveActionVal.style.color = "#DC2626";
+        actionIconWrap.style.backgroundColor = "#FEF2F2";
+        actionIcon.className = "fa-solid fa-circle-xmark";
+        actionIcon.style.color = "#DC2626";
+      } else if (gridImport > 100) {
+        liveActionVal.innerText = "Grid Import";
+        liveActionVal.style.color = "#D97706";
+        actionIconWrap.style.backgroundColor = "#FFFBEB";
+        actionIcon.className = "fa-solid fa-tower-cell";
+        actionIcon.style.color = "#D97706";
+      } else if (gridExport > 100) {
+        liveActionVal.innerText = "Grid Export";
+        liveActionVal.style.color = "#059669";
+        actionIconWrap.style.backgroundColor = "#ECFDF5";
+        actionIcon.className = "fa-solid fa-bolt-lightning";
+        actionIcon.style.color = "#059669";
+      } else if (peakDem > peakGen && batteryVal > 1000) {
+        liveActionVal.innerText = "Battery Discharging";
+        liveActionVal.style.color = "#0284C7";
+        actionIconWrap.style.backgroundColor = "#E0F2FE";
+        actionIcon.className = "fa-solid fa-battery-quarter";
+        actionIcon.style.color = "#0284C7";
+      } else if (peakGen > peakDem && batteryVal < 8000) {
+        liveActionVal.innerText = "Battery Charging";
+        liveActionVal.style.color = "#10B981";
+        actionIconWrap.style.backgroundColor = "#ECFDF5";
+        actionIcon.className = "fa-solid fa-battery-full";
+        actionIcon.style.color = "#10B981";
+      } else {
+        liveActionVal.innerText = "Balanced Mode";
+        liveActionVal.style.color = "#0B5E4A";
+        actionIconWrap.style.backgroundColor = "#E6F4F0";
+        actionIcon.className = "fa-solid fa-scale-balanced";
+        actionIcon.style.color = "#0B5E4A";
+      }
+
+      // Update Chart Series Data Live
+      chart.data.datasets[0].data = solarProfile.map(v => Math.round(v * solarMult));
+      chart.data.datasets[1].data = demandProfile.map(v => Math.round(v * demandMult));
+      chart.data.datasets[2].data = batteryProfile.map(v => Math.min(100, Math.round(v * (2000 / Math.max(1, batteryVal)))));
+      chart.data.datasets[3].data = p2pActive ? p2pProfile.map(v => Math.round(v * solarMult)) : hours.map(() => 0);
+      chart.update('none'); // Smooth transition without flicker
+
+      // Update Smart Tips text dynamically
+      const tip1Title = document.getElementById('tip1-title');
+      const tip1Desc = document.getElementById('tip1-desc');
+      if (curtailment > 250) {
+        tip1Title.innerText = "Storage Capacity Bottleneck";
+        tip1Desc.innerText = `Battery storage (${batteryVal} kWh) is undersized for ${solarVal} kW PV. ~${Math.round((curtailment/(solarVal+1))*100)}% surplus midday solar is being curtailed.`;
+      } else {
+        tip1Title.innerText = "Optimal Battery Sizing";
+        tip1Desc.innerText = `Battery capacity (${batteryVal} kWh) effectively captures midday solar generation with minimal curtailment.`;
+      }
+    }
+
+    // --- Toast Handler ---
+    function triggerToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // --- Reset Function ---
+    function resetDefaults() {
+      inputSolar.value = 700;
+      inputBattery.value = 2000;
+      inputHouseholds.value = 1200;
+      inputDemand.value = 1000;
+      toggleGrid.checked = true;
+      toggleP2P.checked = true;
+      document.getElementById('grid-export-limit').value = 100;
+      document.getElementById('grid-import-limit').value = 100;
+      document.getElementById('p2p-export-limit').value = 100;
+      document.getElementById('p2p-import-limit').value = 100;
+      
+      updateSimulation();
+      triggerToast('Parameters reset to initial baseline values');
+    }
+
+    // Event Listeners
+    [inputSolar, inputBattery, inputHouseholds, inputDemand, toggleGrid, toggleP2P].forEach(el => {
+      el.addEventListener('input', updateSimulation);
+      el.addEventListener('change', updateSimulation);
+    });
+
+    // Initialize on load
+    updateSimulation();
+  </script>
+</body>
+</html>
